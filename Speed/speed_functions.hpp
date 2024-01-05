@@ -9,7 +9,7 @@
 #include <iostream>
 #include "main.h"
 
- // 控制区间大小为多少时从快排切换为简单插入
+// 控制区间大小为多少时从快排切换为简单插入
 constexpr auto CUT_OFF = 8;
 
 /**
@@ -32,6 +32,7 @@ typename std::array<T, N>::iterator getMaxIter(std::array<T, N>& arr)
 
 /**
  * \brief 最朴素的方式对一个数组求和.
+ * 如果使用/fp:fast选项，可以自动向量化
  *
  * \param arr
  * \return
