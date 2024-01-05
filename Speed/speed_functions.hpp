@@ -1,22 +1,23 @@
 /*****************************************************************//**
- * \file   plain_functions.hpp
- * \brief  用模板实现了计算函数，包括最大值，求和，排序等。
+ * \file   speed_functions.hpp
+ * \brief  在plain_functions.hpp基础上，对float类型模板特化，用sse进行优化
  *
  * \author sunny
  * \date   January 2024
  *********************************************************************/
 #include <array>
 #include <iostream>
+#include "main.h"
 
-// 控制区间大小为多少时从快排切换为简单插入
+ // 控制区间大小为多少时从快排切换为简单插入
 constexpr auto CUT_OFF = 8;
 
- /**
-  * \brief 最朴素的方式给出一个数组的最大值.
-  *
-  * \param arr
-  * \return
-  */
+/**
+ * \brief 最朴素的方式给出一个数组的最大值.
+ *
+ * \param arr
+ * \return
+ */
 template<typename T, size_t N>
 typename std::array<T, N>::iterator getMaxIter(std::array<T, N>& arr)
 {
@@ -101,4 +102,34 @@ void quickSort(std::array<T, N>& arr, typename std::array<T, N>::iterator low, t
 		quickSort(arr, low, i);
 		quickSort(arr, i + 1, high);
 	}
+}
+
+/**
+ * 求最大值迭代器的模板，针对float特化。
+ *
+ * \param arr
+ * \return
+ */
+template<size_t N>
+typename std::array<float, N>::iterator getMaxIter(std::array<float, N>& arr)
+{
+	std::array<size_t, MAX_THREADS> medium{};
+	//medium.fill(0);
+	auto&& len = arr.size();
+#pragma omp parallel num_threads(MAX_THREADS)
+	{
+		auto thread_id = omp_get_thread_num();
+#pragma omp for schedule(static)
+		for (auto i = 0; i < len; ++i)
+		{
+			if (arr[medium[thread_id]] < arr[i])
+				medium[thread_id] = i;
+		}
+	}
+
+	size_t ret = 0;
+	for (auto& e : medium)
+		if (arr[ret] < arr[e])
+			ret = e;
+	return arr.begin() + ret;
 }
