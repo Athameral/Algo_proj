@@ -73,10 +73,10 @@ void quickSort(std::array<T, N>& arr, typename std::array<T, N>::iterator low, t
 {
 	if (high - low <= 1)
 		return;
-	else if (high - low <= CUT_OFF)
+	/*else if (high - low <= CUT_OFF)
 	{
 		insertionSort(arr, low, high);
-	}
+	}*/
 	else
 	{
 		auto pivot = low + (high - low) / 2;

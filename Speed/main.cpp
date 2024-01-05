@@ -1,6 +1,7 @@
 /*****************************************************************//**
  * \file   main.cpp
  * \brief  用于测试的程序逻辑主框架
+ * 这是提速版本
  *
  * \author 2151522
  * \date   January 2024
@@ -37,6 +38,8 @@ int main()
 	}
 
 	// 求和测试
+	// 说明：使用OpenMP与否对速度没有太大影响
+	// 原因可能是线程开销和其他的优化问题，未仔细判断
 	{
 		std::cout << "开始求和..." << std::endl;
 		auto start_time = omp_get_wtime();
@@ -47,6 +50,7 @@ int main()
 
 	// 排序测试
 	{
+		std::cout << "开始排序..." << std::endl;
 		auto start_time = omp_get_wtime();
 		sortResult = rawFloatData;
 		quickSort(sortResult, sortResult.begin(), sortResult.end());

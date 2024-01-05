@@ -15,7 +15,7 @@
 #include "plain_functions.hpp"
 
 constexpr auto MAX_THREADS = 16;
-constexpr auto SUBDATANUM = 2000000;
+constexpr auto SUBDATANUM = 8000000;
 constexpr auto DATANUM = MAX_THREADS * SUBDATANUM;
 //constexpr auto DATANUM = 24;
 
@@ -49,6 +49,7 @@ int main()
 
 	// ≈≈–Ú≤‚ ‘
 	{
+		std::cout << "ø™ º≈≈–Ú..." << std::endl;
 		auto start_time = omp_get_wtime();
 		sortResult = rawFloatData;
 		quickSort(sortResult, sortResult.begin(), sortResult.end());
