@@ -19,6 +19,7 @@
 #include "speed_functions.hpp"
 
 std::array<float, DATANUM> rawFloatData, sortResult;
+std::array<float, DATANUM / 2> first, second;
 
 int main()
 {
@@ -29,7 +30,6 @@ int main()
 		e = dist(engine);
 
 	// 数据拷贝，用于分开计算
-	std::array<float, DATANUM / 2> first{}, second{};
 	std::copy(rawFloatData.cbegin(), rawFloatData.cbegin() + rawFloatData.size() / 2, first.begin());
 	std::copy(rawFloatData.cbegin() + rawFloatData.size() / 2, rawFloatData.cend(), second.begin());
 
@@ -37,7 +37,7 @@ int main()
 	std::cout << "请输入服务器IP:Port" << std::endl;
 	std::cin >> serverAddress;
 	auto ip = serverAddress.substr(0, serverAddress.find(':'));
-	auto port = std::stoi(serverAddress.substr(serverAddress.find(':')));
+	auto port = std::stoi(serverAddress.substr(serverAddress.find(':') + 1));
 
 	MySocket_tcp socket;
 
@@ -64,7 +64,7 @@ int main()
 	std::cout << "Client开始查找最大值..." << std::endl;
 	auto start_time = omp_get_wtime();
 	auto max_num = *getMaxIter(first);
-	
+
 	auto server_max = 0.0f;
 	if (!socket.Receive(&server_max, sizeof(server_max)))
 	{
@@ -86,8 +86,8 @@ int main()
 	{
 		std::cerr << "未接收求和结果或接收失败..." << std::endl;
 	}
-	
-	std::cout << "求和结果：" << sum + server_sum;
+
+	std::cout << "求和结果：" << sum + server_sum << std::endl;
 
 	// Client开始排序
 	std::cout << "Client开始排序..." << std::endl;
