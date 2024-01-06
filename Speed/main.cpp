@@ -10,7 +10,8 @@
 #include <iostream>
 #include <array>
 #include <random>
-#include <Windows.h>
+//#include <Windows.h>
+//用它会变得不幸
 #include <omp.h>
 
 #include "main.h"
