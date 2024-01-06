@@ -40,87 +40,35 @@ int main()
 	}
 
 	// Server开始查找最大值
-	std::cout << "Client开始查找最大值..." << std::endl;
-	auto start_time = omp_get_wtime();
-	auto max_num = *getMaxIter(first);
+	std::cout << "Server开始查找最大值..." << std::endl;
+	auto server_max = *getMaxIter(second);
 
-	auto server_max = 0.0f;
-	if (!socket.Receive(&server_max, sizeof(server_max)))
+	if (!socket.Send(&server_max, sizeof(server_max)))
 	{
-		std::cerr << "未接收最大值或接收失败..." << std::endl;
+		std::cerr << "未发送最大值或发送失败..." << std::endl;
 	}
 
-	if (server_max < max_num)
+	// Server开始求和
+	std::cout << "Server开始求和..." << std::endl;
+	auto server_sum = getSum(second);
+
+	if (!socket.Send(&server_sum, sizeof(server_sum)))
 	{
-		server_max = max_num;
-		std::cout << "最大值：" << server_max << std::endl;
+		std::cerr << "未发送求和结果或发送失败..." << std::endl;
 	}
 
-	// Client开始求和
-	std::cout << "Client开始求和..." << std::endl;
-	auto sum = getSum(rawFloatData);
+	// Server开始排序
+	std::cout << "Server开始排序..." << std::endl;
+	quickSort(second, second.begin(), second.end());
+	std::cout << "Server排序完毕..." << std::endl;
 
-	auto server_sum = 0.0f;
-	if (!socket.Receive(&server_sum, sizeof(server_sum)))
+	if (!socket.Send(static_cast<void*>(second.data()), second.size() * sizeof(float)))
 	{
-		std::cerr << "未接收求和结果或接收失败..." << std::endl;
+		std::cerr << "未发送排序结果或发送失败..." << std::endl;
 	}
 
-	std::cout << "求和结果：" << sum + server_sum << std::endl;
+	std::cout << "任务均已完成..." << std::endl;
 
-	// Client开始排序
-	std::cout << "Client开始排序..." << std::endl;
-	quickSort(first, first.begin(), first.end());
-
-	if (!socket.Receive(static_cast<void*>(second.data()), second.size() * sizeof(float)))
-	{
-		std::cerr << "未接收排序结果或接收失败..." << std::endl;
-	}
-
-	{
-		auto i = 0;
-		auto it1 = first.cbegin(), it2 = second.cbegin();
-		while (true)
-		{
-			if (it1 != first.cend() && it2 != second.cend())
-			{
-				if (*it1 < *it2)
-					sortResult[i] = *(it2++);
-				else
-					sortResult[i] = *(it1++);
-			}
-			else if (it1 == first.cend() && it2 != second.cend())
-			{
-				std::copy(it2, second.cend(), sortResult.begin() + i);
-				break;
-			}
-			else if (it1 != first.cend() && it2 == second.cend())
-			{
-				std::copy(it1, first.cend(), sortResult.begin() + i);
-				break;
-			}
-			else
-				break; // 其实没必要
-		}
-	}
-
-	std::cout << "测试均已完成..." << std::endl;
-	std::cout << "共消耗：" << omp_get_wtime() - start_time << "秒" << std::endl;
-
-	{
-		std::cout << "开始测试排序..." << std::endl;
-		auto flag = true;
-		for (auto i = sortResult.cbegin(); i != sortResult.cend() - 1; ++i)
-			if (*i > *(i + 1))
-			{
-				std::cout << "排序测试未通过..." << std::endl;
-				flag = false;
-				break;
-			}
-		if (flag)
-			std::cout << "排序测试通过..." << std::endl;
-	}
-
+	//system("PAUSE");
 	return 0;
-
 }

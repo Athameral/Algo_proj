@@ -62,7 +62,6 @@ int main()
 
 	// Client开始查找最大值
 	std::cout << "Client开始查找最大值..." << std::endl;
-	auto start_time = omp_get_wtime();
 	auto max_num = *getMaxIter(first);
 
 	auto server_max = 0.0f;
@@ -72,14 +71,12 @@ int main()
 	}
 
 	if (server_max < max_num)
-	{
 		server_max = max_num;
-		std::cout << "最大值：" << server_max << std::endl;
-	}
+	std::cout << "最大值：" << server_max << std::endl;
 
 	// Client开始求和
 	std::cout << "Client开始求和..." << std::endl;
-	auto sum = getSum(rawFloatData);
+	auto sum = getSum(first);
 
 	auto server_sum = 0.0f;
 	if (!socket.Receive(&server_sum, sizeof(server_sum)))
@@ -92,6 +89,7 @@ int main()
 	// Client开始排序
 	std::cout << "Client开始排序..." << std::endl;
 	quickSort(first, first.begin(), first.end());
+	std::cout << "Client排序完毕..." << std::endl;
 
 	if (!socket.Receive(static_cast<void*>(second.data()), second.size() * sizeof(float)))
 	{
@@ -126,7 +124,7 @@ int main()
 	}
 
 	std::cout << "测试均已完成..." << std::endl;
-	std::cout << "共消耗：" << omp_get_wtime() - start_time << "秒" << std::endl;
+	std::cout << "共消耗：" << omp_get_wtime() - start << "秒" << std::endl;
 
 	{
 		std::cout << "开始测试排序..." << std::endl;

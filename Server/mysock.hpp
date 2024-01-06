@@ -10,6 +10,7 @@
 #include <string>
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include <winsock2.h>
+#include "main.h"
 
 #pragma comment(lib, "ws2_32.lib") // 链接ws2_32.lib库
 
@@ -20,7 +21,7 @@ public:
 	{
 		// 初始化Winsock
 		WSADATA wsaData;
-		if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
+		if (WSAStartup(MAKEWORD(2, 1), &wsaData) != 0)
 		{
 			std::cerr << "Failed to initialize Winsock." << std::endl;
 			exit(1);
@@ -107,7 +108,11 @@ public:
 		// 重用serverAddress，实际上已经是clientAddress了
 		auto& clientAddress = serverAddress;
 		int clientAddressLength = sizeof(clientAddress);
+		auto socket_old = socket_;
 		socket_ = accept(socket_, reinterpret_cast<sockaddr*>(&clientAddress), &clientAddressLength);
+		closesocket(socket_old);
+
+
 		if (socket_ == INVALID_SOCKET)
 		{
 			std::cerr << "Failed to accept:" << inet_ntoa(clientAddress.sin_addr) << ":" << ntohs(clientAddress.sin_port) << std::endl;
@@ -130,11 +135,25 @@ public:
 	}
 	bool Send(const void* buffer, int length)
 	{
-		// 发送数据
-		if (send(socket_, static_cast<const char*>(buffer), length, 0) == SOCKET_ERROR)
+		const int maxChunkSize = 32000;  // 每个数据块的最大大小
+
+		const char* data = static_cast<const char*>(buffer);  // 将缓冲区转换为char指针
+
+		int remainingLength = length;  // 剩余数据的长度
+
+		while (remainingLength > 0)
 		{
-			std::cerr << "Failed to send data." << std::endl;
-			return false;
+			int chunkSize = min(remainingLength, maxChunkSize);  // 获取当前数据块的大小
+
+			// 发送数据块
+			if (send(socket_, data, chunkSize, 0) == SOCKET_ERROR)
+			{
+				std::cerr << "Failed to send data." << std::endl;
+				return false;
+			}
+
+			data += chunkSize;  // 更新数据指针
+			remainingLength -= chunkSize;  // 更新剩余数据长度
 		}
 
 		return true;
@@ -159,15 +178,42 @@ public:
 
 	int Receive(void* buffer, int maxLength)
 	{
-		// 接收数据
-		int bytesRead = recv(socket_, static_cast<char*>(buffer), maxLength, 0);
-		if (bytesRead == SOCKET_ERROR)
+		const int maxChunkSize = 32000;  // 每个数据块的最大大小
+
+		char* data = static_cast<char*>(buffer);  // 将缓冲区转换为char指针
+
+		int totalBytesRead = 0;  // 总共已接收的字节数
+
+		while (maxLength > 0)
 		{
-			std::cerr << "Failed to receive data." << std::endl;
-			return -1;
+			int chunkSize = min(maxLength, maxChunkSize);  // 获取当前数据块的大小
+
+			// 接收数据块
+			int bytesRead = recv(socket_, data, chunkSize, 0);
+			if (bytesRead == SOCKET_ERROR)
+			{
+				std::cerr << "Failed to receive data." << std::endl;
+				return -1;
+			}
+
+			if (bytesRead == 0)
+			{
+				// 连接关闭
+				break;
+			}
+
+			data += bytesRead;  // 更新数据指针
+			maxLength -= bytesRead;  // 更新剩余数据长度
+			totalBytesRead += bytesRead;  // 更新总共已接收的字节数
+
+			if (bytesRead < chunkSize)
+			{
+				// 已接收到最后的数据块
+				break;
+			}
 		}
 
-		return bytesRead;
+		return totalBytesRead;
 	}
 
 private:
