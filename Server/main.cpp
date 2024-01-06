@@ -7,10 +7,20 @@
  *********************************************************************/
 
 #include <iostream>
+#include <array>
+#include <random>
 #include "mysock.hpp"
+
+std::array<int, 256000> rawFloatData;
 
 int main()
 {
+    {
+        auto i = 0;
+        for (auto& e : rawFloatData)
+            e = i++;
+    }
+
     MySocket_tcp socket;
 
     // 连接到服务器
@@ -20,8 +30,9 @@ int main()
     }
 
     // 发送数据
-    if (!socket.Send("Hello, server!"))
+    if (!socket.Send(static_cast<const void*>(rawFloatData.data()), rawFloatData.size() * sizeof(int)))
     {
+        std::cout << "finish" << std::endl;
         return 1;
     }
 
