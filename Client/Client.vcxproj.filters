@@ -18,13 +18,8 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="main.h">
+    <ClCompile Include="mysock.hpp">
       <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="mysock.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
+    </ClCompile>
   </ItemGroup>
 </Project>
