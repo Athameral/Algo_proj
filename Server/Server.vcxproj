@@ -32,6 +32,7 @@
   <ItemGroup>
     <ClInclude Include="main.h" />
     <ClInclude Include="mysock.hpp" />
+    <ClInclude Include="speed_functions.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
