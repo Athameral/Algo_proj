@@ -67,6 +67,20 @@ int main()
 		std::cerr << "未发送排序结果或发送失败..." << std::endl;
 	}
 
+	{
+		std::cout << "开始测试排序..." << std::endl;
+		auto flag = true;
+		for (auto i = second.cbegin(); i != second.cend() - 1; ++i)
+			if (*i > *(i + 1))
+			{
+				std::cout << "排序测试未通过..." << std::endl;
+				flag = false;
+				break;
+			}
+		if (flag)
+			std::cout << "排序测试通过..." << std::endl;
+	}
+
 	std::cout << "任务均已完成..." << std::endl;
 
 	//system("PAUSE");

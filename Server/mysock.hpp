@@ -135,7 +135,7 @@ public:
 	}
 	bool Send(const void* buffer, int length)
 	{
-		const int maxChunkSize = 32000;  // 每个数据块的最大大小
+		const int maxChunkSize = 8192;  // 每个数据块的最大字节数
 
 		const char* data = static_cast<const char*>(buffer);  // 将缓冲区转换为char指针
 
@@ -146,14 +146,15 @@ public:
 			int chunkSize = min(remainingLength, maxChunkSize);  // 获取当前数据块的大小
 
 			// 发送数据块
-			if (send(socket_, data, chunkSize, 0) == SOCKET_ERROR)
+			auto sent_chunk = send(socket_, data, chunkSize, 0);
+			if (sent_chunk == SOCKET_ERROR || sent_chunk == 0)
 			{
 				std::cerr << "Failed to send data." << std::endl;
 				return false;
 			}
 
-			data += chunkSize;  // 更新数据指针
-			remainingLength -= chunkSize;  // 更新剩余数据长度
+			data += sent_chunk;  // 更新数据指针
+			remainingLength -= sent_chunk;  // 更新剩余数据长度
 		}
 
 		return true;
@@ -178,7 +179,7 @@ public:
 
 	int Receive(void* buffer, int maxLength)
 	{
-		const int maxChunkSize = 32000;  // 每个数据块的最大大小
+		const int maxChunkSize = 8192;  // 每个数据块的最大大小
 
 		char* data = static_cast<char*>(buffer);  // 将缓冲区转换为char指针
 
@@ -193,7 +194,7 @@ public:
 			if (bytesRead == SOCKET_ERROR)
 			{
 				std::cerr << "Failed to receive data." << std::endl;
-				return -1;
+				return false;
 			}
 
 			if (bytesRead == 0)
