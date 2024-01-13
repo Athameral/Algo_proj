@@ -63,6 +63,7 @@ int main()
 	//std::sort(second.begin(), second.end());
 	std::cout << "Server排序完毕..." << std::endl;
 
+	// 一定要有这句！！！否则发送会有大问题！
 	omp_set_num_threads(1);
 
 	if (!socket.Send(static_cast<void*>(second.data()), second.size() * sizeof(float)))

@@ -92,6 +92,7 @@ int main()
 	//std::sort(first.begin(), first.end());
 	std::cout << "Client排序完毕..." << std::endl;
 
+	// 一定要有这句！！！否则发送会有大问题！
 	omp_set_num_threads(1);
 
 	if (!socket.Receive(static_cast<void*>(second.data()), second.size() * sizeof(float)))
