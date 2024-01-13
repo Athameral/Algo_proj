@@ -14,6 +14,9 @@
 
 #pragma comment(lib, "ws2_32.lib") // 链接ws2_32.lib库
 
+// 每个区块最大字节数
+const int maxChunkSize = 8192; // 简单实验后，建议不要小于2048，也不要大于10240，不是很严谨的结果
+
 class MySocket_tcp
 {
 public:
@@ -135,8 +138,6 @@ public:
 	}
 	bool Send(const void* buffer, int length)
 	{
-		const int maxChunkSize = 8192;  // 每个数据块的最大字节数
-
 		const char* data = static_cast<const char*>(buffer);  // 将缓冲区转换为char指针
 
 		int remainingLength = length;  // 剩余数据的长度
@@ -179,7 +180,6 @@ public:
 
 	int Receive(void* buffer, int maxLength)
 	{
-		const int maxChunkSize = 8192;  // 每个数据块的最大大小
 
 		char* data = static_cast<char*>(buffer);  // 将缓冲区转换为char指针
 
@@ -194,7 +194,7 @@ public:
 			if (bytesRead == SOCKET_ERROR)
 			{
 				std::cerr << "Failed to receive data." << std::endl;
-				return false;
+				return 0;
 			}
 
 			if (bytesRead == 0)
