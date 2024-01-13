@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client", "Client\Client.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Server", "Server\Server.vcxproj", "{433B7E81-707E-4E27-A6C3-2D04450E1828}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Shared", "Shared\Shared.vcxitems", "{86D70F43-0ED2-4E19-BCBA-AB945E966AB1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -75,5 +77,11 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {949F71DF-7354-499B-990A-682850EF3C2C}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Shared\Shared.vcxitems*{265082b6-66a2-48da-8d2f-5a2f85e596d0}*SharedItemsImports = 4
+		Shared\Shared.vcxitems*{433b7e81-707e-4e27-a6c3-2d04450e1828}*SharedItemsImports = 4
+		Shared\Shared.vcxitems*{830f4ecd-cf8d-4110-b271-09dd40623e9f}*SharedItemsImports = 4
+		Shared\Shared.vcxitems*{86d70f43-0ed2-4e19-bcba-ab945e966ab1}*SharedItemsImports = 9
 	EndGlobalSection
 EndGlobal
