@@ -24,7 +24,7 @@ std::array<float, DATANUM / 2> first, second;
 int main()
 {
 	// 生成随机数用于测试
-	std::minstd_rand engine(1234); // 固定随机数种子，确保结果一致性
+	std::minstd_rand engine(12345); // 固定随机数种子，确保结果一致性
 	std::uniform_real_distribution<float> dist(0.0F, 100.0F); // 在[0,100]内均匀分布的随机数
 	for (auto& e : rawFloatData)
 		e = dist(engine);
@@ -88,8 +88,8 @@ int main()
 
 	// Client开始排序
 	std::cout << "Client开始排序..." << std::endl;
-	//quickSort(first, first.begin(), first.end());
-	std::sort(first.begin(), first.end());
+	quickSort(first, first.begin(), first.end());
+	//std::sort(first.begin(), first.end());
 	std::cout << "Client排序完毕..." << std::endl;
 
 	omp_set_num_threads(1);

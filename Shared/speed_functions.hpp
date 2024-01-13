@@ -194,9 +194,14 @@ void quickSort(std::array<float, N>& arr, typename std::array<float, N>::iterato
 	while (j < arr.size())
 	{
 		auto min_ptr = 0;
+
+		for (auto i = 0; i < MAX_THREADS; ++i)
+			if (medium_ptr[i] < (i + 1) * len)
+				min_ptr = i;
+
 		for (size_t i = 0; i < MAX_THREADS; ++i)
 		{
-			if ((i < MAX_THREADS - 1 && medium_ptr[i] < (i + 1) * len) || (i == MAX_THREADS - 1 && medium_ptr[i] < size))
+			if (medium_ptr[i] < (i + 1) * len)
 			{
 				if (arr[medium_ptr[min_ptr]] > arr[medium_ptr[i]])
 					min_ptr = i;
