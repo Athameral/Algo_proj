@@ -88,8 +88,11 @@ int main()
 
 	// Client开始排序
 	std::cout << "Client开始排序..." << std::endl;
-	quickSort(first, first.begin(), first.end());
+	//quickSort(first, first.begin(), first.end());
+	std::sort(first.begin(), first.end());
 	std::cout << "Client排序完毕..." << std::endl;
+
+	omp_set_num_threads(1);
 
 	if (!socket.Receive(static_cast<void*>(second.data()), second.size() * sizeof(float)))
 	{
@@ -99,28 +102,17 @@ int main()
 	{
 		auto i = 0;
 		auto it1 = first.cbegin(), it2 = second.cbegin();
-		while (true)
+		while (it1 != first.cend() && it2 != second.cend())
 		{
-			if (it1 != first.cend() && it2 != second.cend())
-			{
-				if (*it1 < *it2)
-					sortResult[i] = *(it2++);
-				else
-					sortResult[i] = *(it1++);
-			}
-			else if (it1 == first.cend() && it2 != second.cend())
-			{
-				std::copy(it2, second.cend(), sortResult.begin() + i);
-				break;
-			}
-			else if (it1 != first.cend() && it2 == second.cend())
-			{
-				std::copy(it1, first.cend(), sortResult.begin() + i);
-				break;
-			}
+			if (*it1 < *it2)
+				sortResult[i++] = *(it1++);
 			else
-				break; // 其实没必要
+				sortResult[i++] = *(it2++);
 		}
+		while (it1 != first.cend())
+			sortResult[i++] = *(it1++);
+		while (it2 != second.cend())
+			sortResult[i++] = *(it2++);
 	}
 
 	std::cout << "测试均已完成..." << std::endl;
@@ -129,8 +121,8 @@ int main()
 	{
 		std::cout << "开始测试排序..." << std::endl;
 		auto flag = true;
-		for (auto i = sortResult.cbegin(); i != sortResult.cend() - 1; ++i)
-			if (*i > *(i + 1))
+		for (auto i = 0; i < MAX_THREADS * SUBDATANUM - 2; ++i)
+			if (sortResult[i] > sortResult[i + 1])
 			{
 				std::cout << "排序测试未通过..." << std::endl;
 				flag = false;

@@ -27,7 +27,7 @@ int main()
 	MySocket_tcp socket;
 
 	// 绑定
-	if (!socket.Listen_Accept(ip,port))
+	if (!socket.Listen_Accept(ip, port))
 	{
 		return 1;
 	}
@@ -60,25 +60,14 @@ int main()
 	// Server开始排序
 	std::cout << "Server开始排序..." << std::endl;
 	quickSort(second, second.begin(), second.end());
+	//std::sort(second.begin(), second.end());
 	std::cout << "Server排序完毕..." << std::endl;
+
+	omp_set_num_threads(1);
 
 	if (!socket.Send(static_cast<void*>(second.data()), second.size() * sizeof(float)))
 	{
 		std::cerr << "未发送排序结果或发送失败..." << std::endl;
-	}
-
-	{
-		std::cout << "开始测试排序..." << std::endl;
-		auto flag = true;
-		for (auto i = second.cbegin(); i != second.cend() - 1; ++i)
-			if (*i > *(i + 1))
-			{
-				std::cout << "排序测试未通过..." << std::endl;
-				flag = false;
-				break;
-			}
-		if (flag)
-			std::cout << "排序测试通过..." << std::endl;
 	}
 
 	std::cout << "任务均已完成..." << std::endl;

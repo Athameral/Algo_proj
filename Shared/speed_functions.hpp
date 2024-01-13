@@ -189,21 +189,22 @@ void quickSort(std::array<float, N>& arr, typename std::array<float, N>::iterato
 	for (size_t i = 0; i < MAX_THREADS; ++i)
 		medium_ptr[i] = i * len;
 
-	std::vector<float> result;
-	while (result.size() < arr.size())
+	std::vector<float> result(arr.size());
+	auto j = 0;
+	while (j < arr.size())
 	{
-		auto max_ptr = medium_ptr[0];
+		auto min_ptr = 0;
 		for (size_t i = 0; i < MAX_THREADS; ++i)
 		{
 			if ((i < MAX_THREADS - 1 && medium_ptr[i] < (i + 1) * len) || (i == MAX_THREADS - 1 && medium_ptr[i] < size))
 			{
-				if (arr[max_ptr] < arr[medium_ptr[i]])
-					max_ptr = medium_ptr[i];
+				if (arr[medium_ptr[min_ptr]] > arr[medium_ptr[i]])
+					min_ptr = i;
 			}
 			else
 				continue;
 		}
-		result.push_back(arr[max_ptr]);
+		result[j++] = arr[medium_ptr[min_ptr]++];
 	}
 
 	std::copy(result.cbegin(), result.cend(), arr.begin());

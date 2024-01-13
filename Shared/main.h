@@ -7,6 +7,6 @@
  *********************************************************************/
 #pragma once
 
-constexpr auto MAX_THREADS = 16;
-constexpr auto SUBDATANUM = 800000;
+constexpr auto MAX_THREADS = 4;
+constexpr auto SUBDATANUM = 80000;
 constexpr auto DATANUM = MAX_THREADS * SUBDATANUM;
