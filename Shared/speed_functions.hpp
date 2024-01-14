@@ -147,22 +147,15 @@ typename std::array<float, N>::iterator getMaxIter(std::array<float, N>& arr)
 template<size_t N>
 float getSum(std::array<float, N>& arr)
 {
-	std::array<float, MAX_THREADS> medium{};
-	auto&& len = arr.size();
-#pragma omp parallel num_threads(MAX_THREADS)
-	{
-		auto thread_id = omp_get_thread_num();
-#pragma omp for schedule(static)
-		for (auto i = 0; i < len; ++i)
-		{
-			medium[thread_id] += arr[i];
-		}
+	float sum = 0.0F;
 
+#pragma omp parallel for reduction(+:sum) num_threads(MAX_THREADS)
+	for (auto i = 0; i < arr.size(); ++i)
+	{
+		sum += arr[i];
 	}
-	float ret = 0.0F;
-	for (auto& e : medium)
-		ret += e;
-	return ret;
+
+	return sum;
 }
 
 template<size_t N>

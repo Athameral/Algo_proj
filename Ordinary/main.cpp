@@ -16,7 +16,7 @@
 #include "plain_functions.hpp"
 
 constexpr auto MAX_THREADS = 16;
-constexpr auto SUBDATANUM = 8000000;
+constexpr auto SUBDATANUM = 800000;
 constexpr auto DATANUM = MAX_THREADS * SUBDATANUM;
 //constexpr auto DATANUM = 24;
 
